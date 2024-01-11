@@ -1,0 +1,16 @@
+.register-form {
+    max-width: 300px;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.ant-col-rtl {
+    float: left;
+}
+
+.register-form-button {
+    width: 100%;
+}
