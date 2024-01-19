@@ -1,4 +1,4 @@
-import deleteUser from './scripts/helper/localUser';
+import deleteUser from './localUser';
 
 const logout = () => {
     deleteUser();

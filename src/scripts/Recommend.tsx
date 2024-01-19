@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/recommend.css';
-import { Avatar, List, Skeleton, Input } from 'antd';
+// import '../styles/recommend.css';
+import '../styles/content.css';
+import { Avatar, List, Skeleton, Input, Layout, Breadcrumb } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { getUser } from './helper/localUser';
@@ -19,6 +20,8 @@ interface job {
 }
 
 const count = 3;
+
+const { Content, Footer } = Layout;
 
 const RecommendJob: React.FC = () => {
     const [initLoading, setInitLoading] = useState(true);
@@ -107,28 +110,37 @@ const RecommendJob: React.FC = () => {
 
 
     return (
-        <div>
+        <Layout>
             <Header />
-            <List
-                className="job-list"
-                itemLayout="horizontal"
-                dataSource={list}
-                // loadMore={loadMore}
-                renderItem={item => (
-                    <List.Item
-                        actions={[<FontAwesomeIcon onClick={changeFavorite(item)} icon={faHeart} color={item.favorite ? "red" : "gray"} />]}
-                    >
-                        <Skeleton avatar title={false} loading={false} active>
-                            <List.Item.Meta
-                                avatar={<Avatar src={item.company_logo} />}
-                                title={<a href={item.url}>{item.title}</a>}
-                                description={item.keywords.join(', ')}
-                            />
-                        </Skeleton>
-                    </List.Item>
-                )}
-            />
-        </div>
+            <Content style={{ padding: '0 50px', position: "relative"}}>
+                <Breadcrumb style={{ margin: '16px 0' }}>
+                    <Breadcrumb.Item>Home</Breadcrumb.Item>
+                    <Breadcrumb.Item>Recommend</Breadcrumb.Item>
+                </Breadcrumb>
+                <div className="site-layout-content">
+                    <List
+                        className="job-list"
+                        itemLayout="horizontal"
+                        dataSource={list}
+                        // loadMore={loadMore}
+                        renderItem={item => (
+                            <List.Item
+                                actions={[<FontAwesomeIcon onClick={changeFavorite(item)} icon={faHeart} color={item.favorite ? "red" : "gray"} />]}
+                            >
+                                <Skeleton avatar title={false} loading={false} active>
+                                    <List.Item.Meta
+                                        avatar={<Avatar src={item.company_logo} />}
+                                        title={<a href={item.url}>{item.title}</a>}
+                                        description={item.keywords.join(', ')}
+                                    />
+                                </Skeleton>
+                            </List.Item>
+                        )}
+                    />
+                </div>
+            </Content>
+            <Footer style={{ textAlign: 'center' }}>Job Search ©2024 Created by Yuheng Ding</Footer>
+        </Layout>
     )
 }
 

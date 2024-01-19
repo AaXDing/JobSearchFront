@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import '../styles/header.css';
-import { LikeOutlined, HeartOutlined, SearchOutlined, LogoutOutlined } from '@ant-design/icons';
+import Icon, { LikeOutlined, HeartOutlined, SearchOutlined, LogoutOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button } from 'antd';
 import { deleteUser, getUser } from './helper/localUser';
+import { Link } from 'react-router-dom';
+import { render } from '@testing-library/react';
+import { calc } from 'antd/es/theme/internal';
 
 const logout = () => {
     deleteUser();
@@ -20,75 +23,90 @@ function truncateToFiveWords(inputString: string) {
 
 const userId = truncateToFiveWords(getUser() || "");
 
-const items: MenuProps['items'] = [
-    {
-        label: (
-            <span>
-                Job Search
-            </span>
-        ),
-        key: 'jobsearch',
-        disabled: true,
-    },
-    {
-        label: (
-            <a href="/search" rel="noopener noreferrer">
-                Search
-            </a>
-        ),
-        key: 'search',
-        icon: <SearchOutlined />,
-    },
-    {
-        label: (
-            <a href="/favorite" rel="noopener noreferrer">
-                Favorite
-            </a>
-        ),
-        key: 'favorite',
-        icon: <HeartOutlined />,
-    },
-    {
-        label: (
-            <a href="/recommend" rel="noopener noreferrer">
-                Recommend
-            </a>
-        ),
-        key: 'recommend',
-        icon: <LikeOutlined />,
-    },
-    {
-        label: (
-            <a onClick={logout} rel="noopener noreferrer">
-                Logout {userId}
-            </a>
-        ),
-        key: 'logout',
-        icon: <LogoutOutlined />,
-    },
-];
-
-const Header: React.FC = () => {
-    const [current, setCurrent] = useState('mail');
-
-    const onClick: MenuProps['onClick'] = (e) => {
-        console.log('click ', e);
-        setCurrent(e.key);
-    };
-
-    return <Layout
+const Header: React.FC = (tab: any) => {
+    return <Layout.Header
         style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 1,
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: '#001529',
+            zIndex: 1, width: '100%', height: '64px',
+            padding: '0 10%', justifyContent: 'space-between', // Add this line
         }}
     >
-        <Menu theme="dark"  forceSubMenuRender={true} onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
-    </Layout>;
+        <Menu
+            theme="dark"
+            mode="horizontal"
+            style={{ lineHeight: '64px', float: 'left', width: "400px" }}
+        // selectedKeys={[tab.toString()]}
+        >
+            {renderNavLinks()}
+        </Menu>
+        <Menu
+            theme="dark"
+            mode="horizontal"
+            style={{ lineHeight: '64px', float: 'right', width: "250px" }}
+        >
+            {renderUserLinks()}
+        </Menu>
+    </Layout.Header>
 };
+
+//containers/Navigation.js
+const renderNavLinks = () => {
+    // let { HOME, ACCOUNT, SIGN_IN, PROJECTS } = routes;
+    // let { authUser, toggleMobileMenuOpen, isMobileMenu } = this.props.sessionStore;
+    // let signedInUserId = authUser && authUser.uid;
+    // if (signedInUserId) {
+    return [
+        <Menu.Item key={1}>
+            <Link
+                // onClick={() => toggleMobileMenuOpen()}
+                to={`/search`}
+            >
+                <SearchOutlined /> Search
+            </Link>
+        </Menu.Item>,
+        <Menu.Item key={2}>
+            <Link
+                // onClick={() => toggleMobileMenuOpen()}
+                to={`/favorite`}
+            >
+                <HeartOutlined /> Favorite
+            </Link>
+        </Menu.Item>,
+        <Menu.Item key={3}>
+            <Link
+                // onClick={() => toggleMobileMenuOpen()}
+                to={`/recommend`}
+            >
+                <LikeOutlined /> Recommend
+            </Link>
+        </Menu.Item>
+    ]
+}
+
+const renderUserLinks = () => {
+    return [
+        <Menu.Item
+            style={{
+                float: 'right', display: 'flex',
+                justifyContent: "space-around",
+                alignItems: 'center',
+            }}
+            key={1}
+        >
+            <span style={{ color: 'white' }}>Welcome, {userId}</span>
+        </Menu.Item>,
+        <Menu.Item
+            style={{
+                float: 'right', display: 'flex',
+                justifyContent: "space-around",
+                alignItems: 'center',
+            }}
+            key={2}
+        >
+            <a onClick={logout}>
+                Logout <LogoutOutlined />
+            </a>
+        </Menu.Item>
+    ]
+}
 
 export default Header;

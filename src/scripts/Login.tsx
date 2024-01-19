@@ -1,17 +1,38 @@
 import React from 'react';
 import '../styles/login.css';
 import { useNavigate } from "react-router-dom";
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, theme } from 'antd';
 import { Md5 } from 'ts-md5';
 import { saveUser } from './helper/localUser';
 
+import {
+    LockOutlined,
+    UserOutlined,
+} from '@ant-design/icons';
+import {
+    LoginFormPage,
+    ProConfigProvider,
+    ProFormText,
+} from '@ant-design/pro-components';
+import { Tabs, theme } from 'antd';
+import type { CSSProperties } from 'react';
+import { useState } from 'react';
 
-const Login: React.FC = () => {
+type LoginType = 'account';
+
+const iconStyles: CSSProperties = {
+    color: 'rgba(0, 0, 0, 0.2)',
+    fontSize: '18px',
+    verticalAlign: 'middle',
+    cursor: 'pointer',
+};
+
+const Page = () => {
+    const [loginType, setLoginType] = useState<LoginType>('account');
+    const { token } = theme.useToken();
     const navigate = useNavigate();
     const [loginError, setLoginError] = React.useState('');
 
-    const onFinish = (values: any) => {
+    const onFinish = (values: any): Promise<boolean | void> => {
         console.log('Received values of form: ', values);
         var username = values.username,
             password = values.password;
@@ -37,62 +58,129 @@ const Login: React.FC = () => {
                     //   fetchData();
                     saveUser(username);
                     navigate('/favorite', { replace: true });
+                    return Promise.resolve(true);
                 } else {
                     setLoginError('Invalid username or password');
+                    return Promise.resolve(false);
                 }
             }).catch((error) => {
                 console.log(error);
                 setLoginError('Invalid username or password');
+                return Promise.resolve(false);
             });
+        return Promise.resolve(false);
     };
 
     return (
-        <div>
-            <Form
-                name="normal_login"
-                className="login-form"
-                initialValues={{ remember: true }}
+        <div
+            style={{
+                backgroundColor: 'white',
+                height: '100vh',
+            }}
+        >
+            <LoginFormPage
+                backgroundImageUrl="https://media.journoportfolio.com/users/9087/images/4f0cedf4-6e83-49e4-9dab-cfd650c03754.jpg"
+                logo="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Search_icon.svg/1024px-Search_icon.svg.png"
+                // backgroundVideoUrl="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
+                title="Job Search"
+                submitter={{ searchConfig: { submitText: 'Login now'}}}
+                containerStyle={{
+                    backgroundColor: 'rgba(0, 0, 0,0.65)',
+                    backdropFilter: 'blur(4px)',
+                }}
                 onFinish={onFinish}
+                subTitle="Help you find your best fit position"
+                // activityConfig={{
+                //     style: {
+                //         boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.2)',
+                //         color: token.colorTextHeading,
+                //         borderRadius: 8,
+                //         backgroundColor: 'rgba(0,0,0,0.65)',
+                //         backdropFilter: 'blur(4px)',
+                //     },
+                //     title: 'With the help of AI',
+                //     subTitle: 'we will find you the best position',
+                // }}
             >
-                <span className="title">Job Search</span>
-                <Form.Item
-                    name="username"
-                    rules={[{ required: true, pattern: /^[a-z0-9_]+$/, message: 'Please input your Username!' }]}
+                <Tabs
+                    centered
+                    activeKey={loginType}
+                    onChange={(activeKey) => setLoginType(activeKey as LoginType)}
                 >
-                    <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
-                </Form.Item>
-                <Form.Item
-                    name="password"
-                    rules={[{ required: true, message: 'Please input your Password!' }]}
-                >
-                    <Input
-                        prefix={<LockOutlined className="site-form-item-icon" />}
-                        type="password"
-                        placeholder="Password"
+                    <Tabs.TabPane key={'account'} tab={'Login'} />
+                </Tabs>
+                <>
+                    <ProFormText
+                        name="username"
+                        fieldProps={{
+                            size: 'large',
+                            prefix: (
+                                <UserOutlined
+                                    style={{
+                                        color: token.colorText,
+                                    }}
+                                    className={'prefixIcon'}
+                                />
+                            ),
+                        }}
+                        placeholder={'Username'}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter username!',
+                            },
+                        ]}
                     />
-                </Form.Item>
-
-                <p style={{ color: 'red' }}>{loginError}</p>
-
-                <Form.Item>
-                    <Form.Item name="remember" valuePropName="checked" noStyle>
-                        <Checkbox>Remember me</Checkbox>
-                    </Form.Item>
-
-                    <a className="login-form-forgot" href="">
-                        Forgot password
+                    <ProFormText.Password
+                        name="password"
+                        fieldProps={{
+                            size: 'large',
+                            prefix: (
+                                <LockOutlined
+                                    style={{
+                                        color: token.colorText,
+                                    }}
+                                    className={'prefixIcon'}
+                                />
+                            ),
+                        }}
+                        placeholder={'Password'}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter password!',
+                            },
+                        ]}
+                    />
+                </>
+                <div
+                    style={{
+                        marginBlockEnd: 24,
+                        paddingBottom: 24,
+                    }}
+                >
+                    <a
+                        style={{
+                            float: 'right',
+                        }}
+                        href="/register"
+                    >
+                        Register
                     </a>
-                </Form.Item>
-
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" className="login-form-button">
-                        Log in
-                    </Button>
-                    Or <a href="/register">register now!</a>
-                </Form.Item>
-            </Form>
+                </div>
+            </LoginFormPage>
         </div>
     );
 };
 
-export default Login;
+export default () => {
+    return (
+        <ProConfigProvider dark>
+            <Page />
+        </ProConfigProvider>
+    );
+};
+
+
+// export default Login;
+
