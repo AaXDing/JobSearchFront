@@ -115,7 +115,7 @@ const RecommendJob: React.FC = () => {
             <Content style={{ padding: '0 50px', position: "relative"}}>
                 <Breadcrumb style={{ margin: '16px 0' }}>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>Recommend</Breadcrumb.Item>
+                    <Breadcrumb.Item>Recommendation</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className="site-layout-content">
                     <List

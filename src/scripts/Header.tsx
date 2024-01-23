@@ -76,7 +76,7 @@ const renderNavLinks = () => {
                 // onClick={() => toggleMobileMenuOpen()}
                 to={`/recommend`}
             >
-                <LikeOutlined /> Recommend
+                <LikeOutlined /> Recommendation
             </Link>
         </Menu.Item>
     ]
